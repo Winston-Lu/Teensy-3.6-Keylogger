@@ -11,4 +11,4 @@ Other modifier keys such as the GUI (Windows) key will not work unless paired wi
 
 Other keys such as the function keys, caps/num/scroll locks, as well as the numpad keys should work as usual. 
 
-Media keys such as those on a Corsair K95 are untested, and are likely not supported at this moment
+Media keys such as those on a Corsair K95 are untested, and is not supported at this moment
