@@ -3,7 +3,7 @@ A crude key-logger made on a Teensy 3.6 using the Arduino IDE.
 
 
 
-###Note:###
+## Note:
 
 Modifier keys such as Shift, Ctrl, Alt are only meant to be emulated for typing, and not for uses such as gaming. These keys are held down or released only when a non-modifier key is pressed due to how the USBHOST_t36 library handles the OnPress() and OnRelease() functions. The crude implementation is meant to support unicode characters when using alt-codes.
 
