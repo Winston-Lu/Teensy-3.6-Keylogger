@@ -1,14 +1,25 @@
 # Teensy-3.6-Keylogger
-A crude key-logger made on a Teensy 3.6 using the Arduino IDE.
+A crude key-logger for a US-Layout keyboard made on a Teensy 3.6 using the Arduino IDE.
 
+This keylogger code works an nearly indetectable keylogger. Actions such as key presses and released are mimicked, as well as modifier keys such as Alt, Ctrl, Shift, etc. Other keyloggers often just type a key when a key is pressed, which will not work if they need to hold keys down, such as when you are working on spreadsheets, documents, or other computer programs.
 
+# Modifications
+This project is based on the USBHost_t36.h library, which I had to make a small, yet crude modification to get it to work.
 
-## Note:
+I modified the keyboard.cpp file in /USBHost_t36/keyboard.cpp, where I commented out lines 256, 265, 275, and 283. Those lines detect if a attachRawReleasefunction or attachOnRawPress function is defined. Those lines seem to not detect if the function is actually defined, so I jerry rigged a temporary solution for it.
 
-Modifier keys such as Shift, Ctrl, Alt are only meant to be emulated for typing, and not for uses such as gaming. These keys are released as soon as any other key is released due to how the USBHost_t36 library handles the OnPress() and OnRelease() calls. The crude implementation is meant to make typing seem as usual. As of the current version, alt-codes do not seem to work.
+If you wish to adapt this code for a different keyboard layout, feel free to fork this repo or suggest any changes. You are free to modify or use this code however you want.
 
-Other modifier keys such as the GUI (Windows) key will not work unless paired with a non-modifier key, such as GUI+D. Pressing the GUI key by itself will not work.
+# Version 1 vs Version 2
+Version 1 is based on a function that detects if a key is pressed. Unfortunately, this does not activate when modifier keys such as CTRL are pressed. I have rewritten this for V2 where the use of a different detection function makes this keylogger a lot more undetectable.
 
-Other keys such as the function keys, caps/num/scroll locks, as well as the numpad keys should work as usual. 
+# Limitations and Current Issues
+On my computer, scroll lock activates caps lock, caps lock does nothing, and num lock is inverted (based on the LED). This does not seem to exhibit the same behaviour on other systems. This may be due to my keyboard being rebound (Caps lock -> Esc for vim).
 
-Media keys such as those on a Corsair K95 are untested, and is not supported at this moment
+I have only tested this code for the English US language with the ANSI 101/104 layout. Any other keyboard layout is still untested, but would work for 99% of keyboards in NA.
+
+Looking into the source code, some keys such as right control and left control are defined as the same key. This is a limitation in Arduino's software itself, so this may pose a problem where binds are used heavily, such as in games or macro-heavy workloads.
+
+# To Do
+Find if there is a code for specifically left/right CTRL and such
+
