@@ -1,5 +1,5 @@
 # Teensy-3.6-Keylogger
-A crude key-logger for a US-Layout keyboard made on a Teensy 3.6 using the Arduino IDE.
+A key-logger for a US-Layout keyboard made for a Teensy 3.6 using the Arduino IDE.
 
 This keylogger code works an nearly indetectable keylogger. Actions such as key presses and released are mimicked, as well as modifier keys such as Alt, Ctrl, Shift, etc. Other keyloggers often just type a key when a key is pressed, which will not work if they need to hold keys down, such as when you are working on spreadsheets, documents, or other computer programs.
 
